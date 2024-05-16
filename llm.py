@@ -181,40 +181,13 @@ def chat():
     #    st.session_state.userid = "You"
     #else:
     #    st.sidebar.text_input("Current userid", on_change=userid_change, placeholder=st.session_state.userid, key='userid_input')
-        
-    #Clear conversation
-    if st.sidebar.button("Clear Conversation", key='clear_chat_button'):
-        st.session_state.messages = []
-        move_focus()
-
-    #Example conversation
-    if st.sidebar.button("Show Example Conversation", key='show_example_conversation'):
-        #st.session_state.messages = []                         #don't clear current conversations?
-        for i,up in enumerate(example_user_prompts):
-            st.session_state.messages.append({"role": "user", "content": up})
-            assistant_content = complete_messages(i,len(example_user_prompts), True, False, False)
-            st.session_state.messages.append({"role": "assistant", "content": assistant_content})
-        move_focus()
 
     #st.write(st.session_state.messages)            #debug
         
     #Regenerate & continue
     if (len(st.session_state.messages) > 0):        #only let regenerate and continue if something was already asked
         #Regenerate
-        if st.sidebar.button("Regenerate", key='regenerate'):
-            st.session_state.messages.pop()         #remove last answer to regenerate
-            assistant_content = complete_messages(0,1, True, True, False)
-            st.session_state.messages.append({"role": "assistant", "content": assistant_content})
-            if (ttsOn): TTS(assistant_content)
-            move_focus()
-            
-        #Continue
-        if st.sidebar.button("Continue", key='continue'):
-            st.session_state.messages.pop()         #TODO: instead of regenerating try not to pop but adjust the key
-            assistant_content = complete_messages(0,1, True, False, True)
-            st.session_state.messages.append({"role": "assistant", "content": assistant_content})
-            if (ttsOn): TTS(assistant_content)
-            move_focus()
+        
 
     
 
@@ -259,18 +232,12 @@ def this(input):
     #Assign keys to chat messages
     for i,message in enumerate(st.session_state.messages):
         nkey = int(i/2)
-        if message["role"] == "user":
-            streamlit_chat.message(message["content"], is_user=True, key='chat_messages_user_'+str(nkey))
-        else:
-            streamlit_chat.message(message["content"], is_user=False, key='chat_messages_assistant_'+str(nkey))
 
     nkey = int(len(st.session_state.messages)/2 + 1)
     st.session_state.messages.append({"role": "user", "content": input})
-    streamlit_chat.message(input, is_user=True, key='chat_messages_user_'+str(nkey))
     
     assistant_content = complete_messages(0,1, True, False, False)
     st.session_state.messages.append({"role": "assistant", "content": assistant_content})
-    streamlit_chat.message(assistant_content, key='chat_messages_assistant_'+str(nkey))
 
     if (ttsOn): TTS(assistant_content)
 
@@ -281,8 +248,8 @@ def callback():
 
 speech_to_text(
     language='en',
-    start_prompt="Start recording",
-    stop_prompt="Stop recording",
+    start_prompt="LISTEN",
+    stop_prompt="STOP",
     just_once=True,
     use_container_width=False,
     args=(),
