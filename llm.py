@@ -184,9 +184,6 @@ def chat():
 
     #st.write(st.session_state.messages)            #debug
         
-    #Regenerate & continue
-    if (len(st.session_state.messages) > 0):        #only let regenerate and continue if something was already asked
-        #Regenerate
         
 
     
